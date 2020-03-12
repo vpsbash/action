@@ -7,7 +7,7 @@ on: push
 #    - cron: 0 20 * * *
 
 env:
-  CONFIG_FILE: /seed.config
+  CONFIG_FILE: /home/runner/work/action/action/seed.config
   
 jobs:
 
