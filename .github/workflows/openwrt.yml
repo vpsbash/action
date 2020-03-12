@@ -68,14 +68,15 @@ jobs:
   
       - name: Load custom configuration
         run: |
-          [ -e $CONFIG_FILE ] && cat $CONFIG_FILE >> openwrt/.config
+          [ -e $CONFIG_FILE ] && cat $CONFIG_FILE >> /home/runner/work/action/action/openwrt/.config
       
       - name: SSH connection to Actions
         uses: vpsbash/debugger-action@master
       
       - name: Generate configuration file
-        run: make defconfig
-
+        run: |
+          cd /home/runner/work/action/action/openwrt/
+          make defconfig
       - name: Make download
         run: |
           cd /home/runner/work/action/action/openwrt
