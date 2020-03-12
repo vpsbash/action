@@ -33,7 +33,7 @@ jobs:
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
 
-          # 利用挂载在 /mnt/ 的 14G 额外空间:1
+          # 脌没脫脙鹿脪脭脴脭脷 /mnt/ 碌脛 14G 露卯脥芒驴脮录盲:1
           # sudo mkdir -p -m 777 /mnt/openwrt/bin /mnt/openwrt/build_dir/host /mnt/openwrt/build_dir/hostpkg /mnt/openwrt/dl /mnt/openwrt/feeds /mnt/openwrt/staging_dir
           # ln -s /mnt/openwrt/bin ./bin
           # mkdir -p ./build_dir/host && ln -s /mnt/openwrt/build_dir/host ./build_dir/host
@@ -45,15 +45,15 @@ jobs:
           df -h
       - name: Clone source code
         run: |
-          git clone https://github.com/openwrt/openwrt
+          #git clone https://github.com/openwrt/openwrt
           git clone https://github.com/coolsnowwolf/lede
-      
+          mv lede openwrt
       - name: Load basic configuration
         run: |
           pwd
-          cp lede/package/lean openwrt/package/ -r
-          cp lede/include/target.mk openwrt/include/target.mk 
-          cp lede/package/network/config/firewall/ openwrt/package/network/config/firewall/ -r
+          #cp lede/package/lean openwrt/package/ -r
+          #cp lede/include/target.mk openwrt/include/target.mk 
+          #cp lede/package/network/config/firewall/ openwrt/package/network/config/firewall/ -r
           cd /home/runner/work/action/action/openwrt
           sed -i "s/16384/65536/" package/kernel/linux/files/sysctl-nf-conntrack.conf 
           sed -i '$d' package/lean/default-settings/files/zzz-default-settings
