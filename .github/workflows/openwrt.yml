@@ -53,7 +53,8 @@ jobs:
           git clone https://github.com/Leo-Jo-My/luci-theme-Butterfly package/luci-theme-Butterfly
           git clone https://github.com/Leo-Jo-My/luci-theme-opentomato package/luci-theme-opentomato
           git clone https://github.com/Leo-Jo-My/luci-theme-opentomcat package/luci-theme-opentomcat
-          git clone https://github.com/Ameykyl/luci-app-koolproxyR package/luci-app-koolproxyR
+          git clone https://github.com/Leo-Jo/luci-app-koolproxyR package/luci-app-koolproxyR
+          git clone https://github.com/rufengsuixing/luci-app-adguardhome package/luci-app-adguardhome
           git clone https://github.com/vernesong/OpenClash package/OpenClash
           #mv lede openwrt
       - name: Load basic configuration
