@@ -64,10 +64,14 @@ jobs:
         run: |
           pwd
           cd /home/runner/work/action/action/
-          cp lede/package/lean openwrt/package/ -r
+          cp -r lede/package/lean openwrt/package/
+		  cp -r lede/tools/upx openwrt/tools/
+		  cp -r lede/tools/ucl openwrt/tools/
           #cp lede/include/target.mk openwrt/include/target.mk 
           #cp lede/package/network/config/firewall/ openwrt/package/network/config/firewall/ -r
           cd /home/runner/work/action/action/openwrt/
+		  echo tools-y += ucl upx >>tools/Makefile
+		  echo $(curdir)/upx/compile := $(curdir)/ucl/compile >>tools/Makefile
           sed -i "s/16384/65536/" package/kernel/linux/files/sysctl-nf-conntrack.conf 
           sed -i '$d' package/lean/default-settings/files/zzz-default-settings
           #sed -i "s/mkf2fs e2fsprogs/mkf2fs e2fsprogs htop openssl-util ca-bundle ca-certificates libustream-openssl/" target/linux/x86/Makefile
