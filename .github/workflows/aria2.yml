@@ -1,0 +1,65 @@
+name: Aria2
+
+on: push
+#on:
+#  schedule:
+#    - cron: 0 20 * * *
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+        with:
+          ref: master
+
+      - name: Space cleanup
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          docker rmi `docker images -q`
+          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
+          sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
+          sudo -E apt-get update -y
+          sudo -E apt-get install nano ca-certificates findutils tar gzip dpkg -y
+          sudo -E apt install -y libcurl4-openssl-dev libevent-dev ca-certificates libssl-dev pkg-config build-essential intltool libgcrypt-dev libssl-dev libxml2-dev
+          # 
+          # sudo mkdir -p -m 777 /mnt/openwrt/bin /mnt/openwrt/build_dir/host /mnt/openwrt/build_dir/hostpkg /mnt/openwrt/dl /mnt/openwrt/feeds /mnt/openwrt/staging_dir
+          # ln -s /mnt/openwrt/bin ./bin
+          # mkdir -p ./build_dir/host && ln -s /mnt/openwrt/build_dir/host ./build_dir/host
+          # mkdir -p ./build_dir/host && ln -s /mnt/openwrt/build_dir/hostpkg ./build_dir/hostpkg
+          # ln -s /mnt/openwrt/dl ./dl
+          # ln -s /mnt/openwrt/feeds ./feeds
+          # ln -s /mnt/openwrt/staging_dir ./staging_dir
+
+          df -h
+      - name: Install Aria2c
+        run: |
+          wget -N --no-check-certificate "https://github.com/aria2/aria2/releases/download/release-${aria2_new_ver}/aria2-${aria2_new_ver}.tar.bz2"
+          tar jxvf "aria2-${aria2_new_ver}.tar.bz2"
+          rm -rf "aria2-${aria2_new_ver}.tar.bz2"
+          mv "aria2-${aria2_new_ver}" "aria2"
+          cd "aria2/"
+          sudo ./configure 
+          sudo make install
+          cd ..
+          rm -rf aria2
+          mkdir download
+          cd download
+          wget -N --no-check-certificate "https://github.com/P3TERX/aria2.conf/raw/master/tracker.sh"
+          chmod +x tracker.sh
+          touch aria2.conf
+          bash tracker.sh
+      - name: Download files
+        run: |
+          cd download
+          aria2c --conf-path=aria2.conf -x 16 -i ../download.txt
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: Files
+          path: download/
