@@ -6,7 +6,7 @@ on: push
 #    - cron: 0 20 * * *
 
 env:
-  CONFIG_FILE: /home/runner/work/action/action/seed.config
+  CONFIG_FILE: seed.config
   
 jobs:
 
@@ -49,7 +49,7 @@ jobs:
         run: |
           git clone https://github.com/openwrt/openwrt
           git clone https://github.com/coolsnowwolf/lede
-          cd /home/runner/work/action/action/openwrt
+          cd openwrt/
           #git clone https://github.com/Leo-Jo-My/luci-app-ssr-plus-Jo package/luci-app-ssr-plus-Jo
           #git clone https://github.com/Leo-Jo-My/my package/my
           #git clone https://github.com/Leo-Jo-My/luci-theme-Butterfly package/luci-theme-Butterfly
@@ -61,14 +61,12 @@ jobs:
           #mv lede openwrt
       - name: Load basic configuration
         run: |
-          pwd
-          cd /home/runner/work/action/action/
           cp -r lede/package/lean openwrt/package/
           cp -r lede/tools/upx openwrt/tools/
           cp -r lede/tools/ucl openwrt/tools/
           #cp lede/include/target.mk openwrt/include/target.mk 
           #cp lede/package/network/config/firewall/ openwrt/package/network/config/firewall/ -r
-          cd /home/runner/work/action/action/openwrt/
+          cd action/openwrt/
           echo tools-y += ucl upx >>tools/Makefile
           echo "\$(curdir)/upx/compile := \$(curdir)/ucl/compile" >>tools/Makefile
           sed -i "s/16384/65536/" package/kernel/linux/files/sysctl-nf-conntrack.conf 
@@ -81,30 +79,30 @@ jobs:
       
       - name: Update feeds
         run: |
-          cd /home/runner/work/action/action/openwrt/
+          cd openwrt/
           ./scripts/feeds update -a
           ./scripts/feeds install -a
   
       - name: Load custom configuration
         run: |
-          [ -e $CONFIG_FILE ] && cat $CONFIG_FILE >> /home/runner/work/action/action/openwrt/.config
+          [ -e $CONFIG_FILE ] && cat $CONFIG_FILE >> openwrt/.config
       
       #- name: SSH connection to Actions
       #  uses: vpsbash/debugger-action@master
       
       - name: Generate configuration file
         run: |
-          cd /home/runner/work/action/action/openwrt/
+          cd openwrt/
           make defconfig
       - name: Make download
         run: |
-          cd /home/runner/work/action/action/openwrt
+          cd openwrt
           make download -j8
           find dl -size -1024c -exec rm -f {} \;
 
       - name: Compile firmware
         run: |
-          cd /home/runner/work/action/action/openwrt
+          cd openwrt/
           make -j$(nproc) || make -j1 V=s
           echo "======================="
           echo "Space usage:"
@@ -122,4 +120,4 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: OpenWrt firmware
-          path: /home/runner/work/action/action/openwrt/bin/targets/
+          path: openwrt/bin/targets/
