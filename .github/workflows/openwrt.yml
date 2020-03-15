@@ -66,7 +66,7 @@ jobs:
           cp -r lede/tools/ucl openwrt/tools/
           #cp lede/include/target.mk openwrt/include/target.mk 
           #cp lede/package/network/config/firewall/ openwrt/package/network/config/firewall/ -r
-          cd action/openwrt/
+          cd openwrt/
           echo tools-y += ucl upx >>tools/Makefile
           echo "\$(curdir)/upx/compile := \$(curdir)/ucl/compile" >>tools/Makefile
           sed -i "s/16384/65536/" package/kernel/linux/files/sysctl-nf-conntrack.conf 
