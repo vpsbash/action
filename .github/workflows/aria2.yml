@@ -48,7 +48,7 @@ jobs:
           sudo ./configure 
           sudo make install
           cd ..
-          rm -rf aria2
+          sudo rm -rf aria2
           mkdir download
           cd download
           wget -N --no-check-certificate "https://github.com/P3TERX/aria2.conf/raw/master/tracker.sh"
