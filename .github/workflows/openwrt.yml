@@ -63,7 +63,7 @@ jobs:
         run: |
           cp -r lede/package/lean openwrt/package/
           cp -r lede/tools/upx openwrt/tools/
-          cp -r lede/tools/upl openwrt/tools/
+          cp -r lede/tools/ucl openwrt/tools/
           #cp -rf lede/tools/ucl openwrt/tools/
           #cp -r lede/include/target.mk openwrt/include/target.mk 
           #cp lede/package/network/config/firewall/ openwrt/package/network/config/firewall/ -r
