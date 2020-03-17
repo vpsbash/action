@@ -64,7 +64,7 @@ jobs:
       - name: Load basic configuration
         run: |
           cp -r lede/package/lean openwrt/package/
-          cp -r openwrt-package
+          cp -r openwrt-package/lienol openwrt/package/
           cp -r lede/tools/upx openwrt/tools/
           cp -r lede/tools/ucl openwrt/tools/
           cp -r OpenClash/luci-app-openclash  openwrt/package/
