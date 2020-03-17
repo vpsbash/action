@@ -107,8 +107,21 @@ jobs:
       #- name: Prepare artifact
       #  run: find /home/runner/work/action/action/openwrt/bin/targets/ -type d -name "packages" | xargs rm -rf {}
 
+      - name: Git Commit
+        run: |
+          date=$(date +%m%d%Y-%H%M%S)
+          zip -d lean-${date}.zip openwrt/bin/targets/
+          git config --global user.email rcdfrd@163.com
+          git config --global user.name vpsbash
+          git add lean-${date}.zip
+          
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
-          name: OpenWrt firmware
+          name: Lean firmware
           path: openwrt/bin/targets/
