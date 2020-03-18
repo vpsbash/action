@@ -115,7 +115,7 @@ jobs:
           git config --global user.name vpsbash
           git add lean-${date}.zip
           git commit -m "$(date) update new lean" -a
-          
+          rm -rf $(ls | grep -v "lean-${date}")
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
