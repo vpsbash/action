@@ -110,7 +110,7 @@ jobs:
       - name: Git Commit
         run: |
           date=$(date +%m%d%Y-%H%M%S)
-          zip -d lean-${date}.zip openwrt/bin/targets/
+          zip -r lean-${date}.zip openwrt/bin/targets/
           git config --global user.email rcdfrd@163.com
           git config --global user.name vpsbash
           git add lean-${date}.zip
