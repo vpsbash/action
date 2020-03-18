@@ -114,6 +114,7 @@ jobs:
           git config --global user.email rcdfrd@163.com
           git config --global user.name vpsbash
           git add lean-${date}.zip
+          git commit -m "$(date) update new lean" -a
           
       - name: Push changes
         uses: ad-m/github-push-action@master
