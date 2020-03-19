@@ -110,7 +110,8 @@ jobs:
       - name: Git Commit
         run: |
           date=$(date +%m%d%Y-%H%M%S)
-          tar czf pre-release/lean-${date}.tgz openwrt/bin/targets/
+          touch pre-release/lean-${date}.tgz
+          #tar czf pre-release/lean-${date}.tgz openwrt/bin/targets/
           git config --global user.email rcdfrd@163.com
           git config --global user.name vpsbash
           git pull
