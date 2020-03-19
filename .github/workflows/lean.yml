@@ -110,11 +110,11 @@ jobs:
       - name: Git Commit
         run: |
           date=$(date +%m%d%Y-%H%M%S)
-          zip -r pre-release/lean-${date}.zip openwrt/bin/targets/
+          tar czf pre-release/lean-${date}.tgz openwrt/bin/targets/
           git config --global user.email rcdfrd@163.com
           git config --global user.name vpsbash
           git pull
-          git add pre-release/lean-${date}.zip
+          git add pre-release/lean-${date}.tgz
           git commit -m "$(date) update new lean"
           
       - name: Push changes
