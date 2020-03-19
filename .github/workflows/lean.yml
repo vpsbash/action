@@ -100,9 +100,9 @@ jobs:
           echo "======================="
           df -h
           echo "======================="
-          du -h --max-depth=1 ./ --exclude=build_dir --exclude=bin
-          du -h --max-depth=1 ./build_dir
-          du -h --max-depth=1 ./bin
+          #du -h --max-depth=1 ./ --exclude=build_dir --exclude=bin
+          #du -h --max-depth=1 ./build_dir
+          #du -h --max-depth=1 ./bin
 
       #- name: Prepare artifact
       #  run: find /home/runner/work/action/action/openwrt/bin/targets/ -type d -name "packages" | xargs rm -rf {}
@@ -114,7 +114,6 @@ jobs:
           #zip -r pre-release/lean-${date}.zip openwrt/bin/targets/
           git config --global user.email rcdfrd@163.com
           git config --global user.name vpsbash
-          
           git pull
           git add pre-release/lean-${date}.zip
           git commit -m "$(date) update new lean"
