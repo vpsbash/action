@@ -113,6 +113,7 @@ jobs:
           zip -r pre-release/lean-${date}.zip openwrt/bin/targets/
           git config --global user.email rcdfrd@163.com
           git config --global user.name vpsbash
+          git remote add origin https://github.com/vpsbash/action.git
           git pull
           git add pre-release/lean-${date}.zip
           git commit -m "$(date) update new lean"
