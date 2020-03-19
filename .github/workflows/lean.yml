@@ -94,7 +94,7 @@ jobs:
       - name: Compile firmware
         run: |
           cd /home/runner/work/action/action/openwrt
-          make -j$(nproc) || make -j1 V=s
+          #make -j$(nproc) || make -j1 V=s
           echo "======================="
           echo "Space usage:"
           echo "======================="
@@ -110,10 +110,11 @@ jobs:
       - name: Git Commit
         run: |
           date=$(date +%m%d%Y-%H%M%S)
-          zip -r pre-release/lean-${date}.zip openwrt/bin/targets/
+          touch pre-release/lean-${date}.zip
+          #zip -r pre-release/lean-${date}.zip openwrt/bin/targets/
           git config --global user.email rcdfrd@163.com
           git config --global user.name vpsbash
-          git remote add origin https://github.com/vpsbash/action.git
+          
           git pull
           git add pre-release/lean-${date}.zip
           git commit -m "$(date) update new lean"
