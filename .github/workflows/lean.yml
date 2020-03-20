@@ -94,7 +94,7 @@ jobs:
       - name: Compile firmware
         run: |
           cd /home/runner/work/action/action/openwrt
-          #make -j$(nproc) || make -j1 V=s
+          make -j$(nproc) || make -j1 V=s
           echo "======================="
           echo "Space usage:"
           echo "======================="
@@ -114,7 +114,7 @@ jobs:
           #tar czf pre-release/lean-${date}.tgz openwrt/bin/targets/
           git config --global user.email rcdfrd@163.com
           git config --global user.name vpsbash
-          git pull
+
           git add pre-release/lean-${date}.tgz
           git commit -m "$(date) update new lean"
           
