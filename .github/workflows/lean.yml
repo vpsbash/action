@@ -3,8 +3,8 @@ name: Lean
 
 on: push
 #on:
-#  schedule:
-#    - cron: 0 20 * * *
+  schedule:
+    - cron: 0 20 * * *
 
 env:
   CONFIG_FILE: seed.config
