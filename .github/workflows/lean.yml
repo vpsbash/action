@@ -1,8 +1,12 @@
 
 name: Lean
 
-on: push
-#on:
+on: 
+  release:
+    types: [published]
+  push:
+    branches: 
+      - master
   schedule:
     - cron: 0 20 * * *
 
