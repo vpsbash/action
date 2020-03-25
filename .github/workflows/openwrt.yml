@@ -1,9 +1,13 @@
 name: OpenWrt
 
-on: push
-#on:
-#  schedule:
-#    - cron: 0 20 * * *
+on: 
+  release:
+    types: [published]
+  push:
+    branches: 
+      - master
+  schedule:
+    - cron: 0 20 * * *
 
 env:
   CONFIG_FILE: seed.config
