@@ -117,12 +117,6 @@ jobs:
 
           git add pre-release/lean-${date}.tgz
           git commit -m "$(date) update new lean"
-          
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          
       #- name: Upload artifact
       #  uses: actions/upload-artifact@master
       #  with:
