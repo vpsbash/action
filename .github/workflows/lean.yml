@@ -1,4 +1,4 @@
-	#
+#
 # This is free software, lisence use MIT.
 # 
 # Copyright (C) 2019 P3TERX <https://p3terx.com>
@@ -41,19 +41,19 @@ jobs:
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
           df -h
-		  
+          
       - name: Clone source code
         run: |
           git clone https://github.com/coolsnowwolf/lede
       - name: Update feeds
         run: |
-		  cd lede
+          cd lede
           sed -i '$d' package/lean/default-settings/files/zzz-default-settings
           echo echo 0xDEADBEEF \> /etc/config/google_fu_mode >>package/lean/default-settings/files/zzz-default-settings
           echo exit 0  >>package/lean/default-settings/files/zzz-default-settings
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-		  
+          
       - name: Generate configuration file
         run: make defconfig
 
