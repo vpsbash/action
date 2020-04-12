@@ -61,8 +61,7 @@ jobs:
   
       - name: Load custom configuration
         run: |
-          cd lede/
-          [ -e $CONFIG_FILE ] && cat $CONFIG_FILE >> .config
+          [ -e $CONFIG_FILE ] && cat $CONFIG_FILE >> lede/.config
       
       - name: Generate configuration file
         run: |
