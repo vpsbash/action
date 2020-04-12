@@ -1,0 +1,142 @@
+name: OpenWrt-SSRPlus-OpenClash
+
+#openwrt最新源码+SSRPlus+OpenClash
+
+on: 
+  release:
+    types: [published]
+  push:
+    branches: 
+      - master
+  schedule:
+    - cron: 0 0,6,12,18 * * *
+
+env:
+  CONFIG_FILE: seed.config
+  
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+        with:
+          ref: master
+
+      - name: Space cleanup
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          docker rmi `docker images -q`
+          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
+          sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
+          sudo -E apt-get update
+          sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3.5 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf
+          sudo -E apt-get -y autoremove --purge
+          sudo -E apt-get clean
+          wget https://github.com/upx/upx/releases/download/v3.96/upx-3.96-amd64_linux.tar.xz
+          tar -Jxf upx*.tar.xz
+          sudo cp upx*/upx /usr/bin
+          rm -rf openwrt
+          
+          # 
+          # sudo mkdir -p -m 777 /mnt/openwrt/bin /mnt/openwrt/build_dir/host /mnt/openwrt/build_dir/hostpkg /mnt/openwrt/dl /mnt/openwrt/feeds /mnt/openwrt/staging_dir
+          # ln -s /mnt/openwrt/bin ./bin
+          # mkdir -p ./build_dir/host && ln -s /mnt/openwrt/build_dir/host ./build_dir/host
+          # mkdir -p ./build_dir/host && ln -s /mnt/openwrt/build_dir/hostpkg ./build_dir/hostpkg
+          # ln -s /mnt/openwrt/dl ./dl
+          # ln -s /mnt/openwrt/feeds ./feeds
+          # ln -s /mnt/openwrt/staging_dir ./staging_dir
+          df -h
+      - name: Clone source code
+        run: |
+          git clone https://github.com/openwrt/openwrt
+          git clone https://github.com/coolsnowwolf/lede
+          #git clone https://github.com/Lienol/openwrt-package
+          git clone https://github.com/vernesong/OpenClash
+          git clone https://github.com/jerrykuku/luci-theme-argon
+          cd openwrt/
+          #git clone https://github.com/Leo-Jo/luci-app-koolproxyR package/luci-app-koolproxyR
+          git clone https://github.com/rufengsuixing/luci-app-adguardhome package/luci-app-adguardhome
+      - name: Load basic configuration
+        run: |
+          cp -r lede/package/lean openwrt/package/
+          #cp -r openwrt-package/lienol openwrt/package/
+          cp -r lede/tools/upx openwrt/tools/
+          cp -r lede/tools/ucl openwrt/tools/
+          cp -r OpenClash/luci-app-openclash  openwrt/package/
+          git clone https://github.com/jerrykuku/lua-maxminddb.git package/lean/lua-maxminddb
+          git clone https://github.com/jerrykuku/luci-app-vssr.git package/lean/luci-app-vssr
+          rm -rf openwrt/package/lean/luci-theme-argon
+          cp -r luci-theme-argon openwrt/package/
+          #cp -r lede/include/target.mk openwrt/include/target.mk 
+          #cp -r lede/package/network/config/firewall/ openwrt/package/network/config/firewall/ 
+          cd openwrt/
+          sed -i "/tools-y += lzma squashfskit4 zip/a\tools-y += ucl upx" tools/Makefile 
+          sed -i "/\$(curdir)\/cbootimage\/compile += \$(curdir)\/automake\/compile/a\$(curdir)\/upx\/compile := \$(curdir)\/ucl\/compile" tools/Makefile 
+          #echo src-git lienol https://github.com/Lienol/openwrt-package  >>feeds.conf.default
+          sed -i "s/16384/65536/" package/kernel/linux/files/sysctl-nf-conntrack.conf 
+          sed -i '$d' package/lean/default-settings/files/zzz-default-settings
+          sed -i "s/mkf2fs e2fsprogs/mkf2fs e2fsprogs htop wget curl nano/" target/linux/x86/Makefile
+          sed -i "s/urandom-seed urngd/urandom-seed urngd luci luci-i18n-base-zh-cn luci-lib-ipkg luci-app-aliddns luci-app-upnp po2lmo openssl-util ipset ip-full kmod-tun diffutils ca-bundle ca-certificates libustream-openssl luci-app-adbyby-plus luci-app-autoreboot luci-app-ssr-plus luci-app-unblockmusic ddns-scripts_aliyun luci-app-vlmcsd luci-app-ramfree luci-app-flowoffload luci-app-adguardhome luci-app-openclash luci-app-nlbwmon coreutils coreutils-nohup jsonfilter luci-theme-argon luci-app-vssr lua-maxminddb/" include/target.mk
+          sed -i "s/dnsmasq iptables ip6tables ppp ppp-mod-pppoe firewall odhcpd-ipv6only odhcp6c kmod-ipt-offload/dnsmasq-full iptables iptables-mod-nat-extra ip6tables ppp ppp-mod-pppoe firewall odhcpd-ipv6only odhcp6c kmod-ipt-offload/" include/target.mk
+          echo echo 0xDEADBEEF \> /etc/config/google_fu_mode >>package/lean/default-settings/files/zzz-default-settings
+          echo exit 0  >>package/lean/default-settings/files/zzz-default-settings
+      
+      - name: Update feeds
+        run: |
+          cd openwrt/
+          ./scripts/feeds clean
+          ./scripts/feeds update -a
+          #rm -rf feeds/lienol/lienol/ipt2socks
+          #rm -rf feeds/lienol/lienol/shadowsocksr-libev
+          #rm -rf feeds/lienol/lienol/pdnsd-alt
+          #rm -rf feeds/lienol/package/verysync
+          #rm -rf feeds/lienol/lienol/luci-app-verysync
+          #rm -rf package/lean/luci-app-kodexplorer
+          #rm -rf package/lean/luci-app-pppoe-relay
+          #rm -rf package/lean/luci-app-pptp-server
+          #rm -rf package/lean/luci-app-v2ray-server
+          ./scripts/feeds install -a
+          rm -rf openwrt/package/lean/luci-theme-argon
+          #sed -i '$d' feeds.conf.default
+          
+      - name: Load custom configuration
+        run: |
+          [ -e $CONFIG_FILE ] && cat $CONFIG_FILE >> openwrt/.config
+      
+      #- name: SSH connection to Actions
+      #  uses: vpsbash/debugger-action@master
+      
+      - name: Generate configuration file
+        run: |
+          cd openwrt/
+          make defconfig
+      - name: Make download
+        run: |
+          cd openwrt/
+          make download -j8
+          find dl -size -1024c -exec rm -f {} \;
+      - name: Compile firmware
+        run: |
+          cd openwrt/
+          make -j$(nproc) || make -j1 V=s
+          echo "======================="
+          echo "Space usage:"
+          echo "======================="
+          df -h
+          echo "======================="
+          du -h --max-depth=1 ./ --exclude=build_dir --exclude=bin
+          du -h --max-depth=1 ./build_dir
+          du -h --max-depth=1 ./bin
+      - name: Prepare artifact
+        run: find ./openwrt/bin/targets/ -type d -name "packages" | xargs rm -rf {}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: OpenWrt-SSRPlus-OpenClash-firmware
+          path: openwrt/bin/targets/
