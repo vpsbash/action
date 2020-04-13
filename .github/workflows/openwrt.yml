@@ -74,7 +74,7 @@ jobs:
           #cp -r luci-theme-argon openwrt/package/
           #cp -r lede/include/target.mk openwrt/include/target.mk 
           cp -r lede/package/network/config/firewall/ openwrt/package/network/config/firewall/ 
-          #cd openwrt/
+          cd openwrt/
           sed -i "/tools-y += lzma squashfskit4 zip/a\tools-y += ucl upx" tools/Makefile 
           #sed -i "/\$(curdir)\/cbootimage\/compile += \$(curdir)\/automake\/compile/a\$(curdir)\/upx\/compile := \$(curdir)\/ucl\/compile" tools/Makefile 
           #echo src-git lienol https://github.com/Lienol/openwrt-package  >>feeds.conf.default
