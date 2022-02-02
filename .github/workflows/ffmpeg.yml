@@ -1,0 +1,54 @@
+name: ffmpeg non-free
+
+on: 
+  release:
+    types: [published]
+  push:
+    branches: 
+      - master
+  schedule:
+    - cron: 0 1 * * *
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+        with:
+          ref: master
+
+      - name: Space cleanup
+        run: |
+          docker rmi `docker images -q`
+          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
+          sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
+          sudo -E apt-get update
+          sudo -E apt-get -y autoremove --purge
+          sudo -E apt-get clean
+      - name: install requirments
+        run: |
+          apt install git curl gcc libssl-dev zlib1g-dev libva-dev python build-essential curl ca-certificates python3 python-is-python3 ninja-build meson -y
+          wget  https://sh.rustup.rs
+          sh index.html -y
+          rm -rf index.html
+          source $HOME/.cargo/env
+          git clone https://github.com/markus-perl/ffmpeg-build-script.git
+          
+       - name: compile ffmpeg
+        run: |         
+          cd ffmpeg-build-script
+          SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build--enable-gpl-and-non-free --full-static
+          mkdir /tmp/ffmpeg1
+          cp workspace/bin/ff* /tmp/ffmpeg1/
+       
+       - name: upload file
+         uses: actions/upload-artifact@master
+         with:
+           name: ffmpeg-static
+           path: /tmp/ffmpeg1/
+          
+          
