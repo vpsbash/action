@@ -30,7 +30,7 @@ jobs:
       run: |         
         cd ffmpeg-build-script
         source $HOME/.cargo/env
-        SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build--enable-gpl-and-non-free --full-static
+        SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build --enable-gpl-and-non-free --full-static
         mkdir /tmp/ffmpeg1
         cp workspace/bin/ff* /tmp/ffmpeg1/
     - name: upload file
