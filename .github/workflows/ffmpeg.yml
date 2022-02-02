@@ -1,5 +1,4 @@
-name: ffmpeg non-free
-
+name: build ffmpeg non-free
 on: 
   release:
     types: [published]
@@ -8,19 +7,14 @@ on:
       - master
   schedule:
     - cron: 0 1 * * *
-
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@master
         with:
           ref: master
-
       - name: Space cleanup
         run: |
           docker rmi `docker images -q`
@@ -36,9 +30,8 @@ jobs:
           sh index.html -y
           rm -rf index.html
           source $HOME/.cargo/env
-          git clone https://github.com/markus-perl/ffmpeg-build-script.git
-          
-       - name: compile ffmpeg
+          git clone https://github.com/markus-perl/ffmpeg-build-script.git        
+      - name: compile ffmpeg
         run: |         
           cd ffmpeg-build-script
           SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build--enable-gpl-and-non-free --full-static
