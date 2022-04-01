@@ -20,6 +20,7 @@ jobs:
         sudo -E apt-get clean
     - name: install requirments
       run: |
+        sudo -E apt-get update -y
         sudo -E apt install git curl gcc libssl-dev zlib1g-dev libva-dev build-essential curl ca-certificates python3 python-is-python3 ninja-build meson -y
         wget  https://sh.rustup.rs
         sh index.html -y
